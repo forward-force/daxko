@@ -1,0 +1,19 @@
+###############################################################################
+#                          Generated on phpdocker.io                          #
+###############################################################################
+version: "3.1"
+services:
+
+    php-fpm:
+      build: phpdocker/php-fpm
+      container_name: daxko-php-fpm
+      working_dir: /application
+      environment:
+        XDEBUG_CONFIG: "remote_host=docker.for.mac.host.internal"
+        PHP_IDE_CONFIG: "serverName=daxko-Docker"
+        DAXKO_TOKEN: $DAXKO_TOKEN
+        DAXKO_SECRET: $DAXKO_SECRET
+      volumes:
+        - .:/application
+        - ./phpdocker/php-fpm/php-ini-overrides.ini:/etc/php/7.4/cli/conf.d/99-overrides.ini
+
