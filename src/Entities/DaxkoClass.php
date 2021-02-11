@@ -2,9 +2,7 @@
 
 namespace ForwardForce\Daxko\Entities;
 
-use ForwardForce\Daxko\Client;
 use ForwardForce\Daxko\Contracts\ApiAwareContract;
-use ForwardForce\Daxko\Response;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\Message;
@@ -198,13 +196,15 @@ class DaxkoClass extends DaxkoEntity implements ApiAwareContract
             $classes = [];
             $apiClasses = $this->responseToArray();
 
-            // foreach ($apiClasses as $class) {
-            //     $instance = new static($this->client);
-            //     $instance->response->withBody(new Message());
-            //     $instance->setProperties();
-            //     $classes[] = $instance;
-            // }
-                    $classes = $apiClasses;
+            foreach ($apiClasses as $class) {
+                // $instance = new static($this->client);
+                // $instance->response->withBody(new Message());
+                // $instance->setProperties();
+                // $classes[] = $instance;
+
+                $classes[] = $class['brief'];
+            }
+                    // $classes = $apiClasses;
         } catch (RequestException $e) {
             $error['request'] = Message::toString($e->getRequest());
 

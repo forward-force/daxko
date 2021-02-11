@@ -15,8 +15,9 @@ use GuzzleHttp\Psr7\Message;
 
 class Daxko
 {
-    protected string $baseURL = 'https://api.partners.daxko.com/api/';
-    protected string $apiVersion = 'v1';
+    const BASE_URL = 'https://api.partners.daxko.com';
+    const API_VERSION = '/api/v1';
+
 
     /**
      * An HTTPClient to query Daxko's API
@@ -24,14 +25,13 @@ class Daxko
     protected Client $client;
 
 
-    public function __construct(string $accessToken, array $options = [])
+    public function __construct(string $accessToken)
     {
         $clientConfig = [
-            // 'base_uri' => $options['base_uri'] ?? $this->baseURL.$this->apiVersion,
-            'base_uri' => 'https://api.partners.daxko.com',
+            'base_uri' => self::BASE_URL,
             'headers' => [
                 'Content-Type' => 'application/json',
-                'Authorization' => 'Bearer '.$accessToken,
+                'Authorization' => 'Bearer ' . $accessToken,
             ]
         ];
 
@@ -51,7 +51,7 @@ class Daxko
     {
         try {
             $response = (new Client())
-                ->post('https://api.partners.daxko.com/auth/token', [
+                ->post(self::BASE_URL . '/auth/token', [
                     'headers' => [ 'Content-Type' => 'application/json' ],
                     'json' => [
                         'client_id' => $clientId,
@@ -82,7 +82,7 @@ class Daxko
     {
         try {
             $response = (new Client())
-                ->post('https://api.partners.daxko.com/auth/token', [
+                ->post(self::BASE_URL . '/auth/token', [
                     'headers' => [ 'Content-Type' => 'application/json' ],
                     'json' => [
                         'client_id' => $clientId,

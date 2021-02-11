@@ -2,9 +2,7 @@
 
 namespace ForwardForce\Daxko\Entities;
 
-use ForwardForce\Daxko\Client;
 use ForwardForce\Daxko\Contracts\ApiAwareContract;
-use ForwardForce\Daxko\Response;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\Message;
