@@ -2,6 +2,13 @@
 
 This is a wrapper around [Daxko API](https://docs.partners.daxko.com/). The API is very minimal, so this implementation is fairly simple.
 
+## Installation
+
+Install via composer as follows:
+```
+composer require forward-force/daxko-api-sdk
+```
+
 ## Usage
 
 ### Authentication
