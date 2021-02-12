@@ -4,12 +4,8 @@ namespace ForwardForce\Daxko;
 
 use ForwardForce\Daxko\Entities\DaxkoClass;
 use ForwardForce\Daxko\Entities\DaxkoUser;
-use ForwardForce\Daxko\Entities\Registrations;
-use ForwardForce\Daxko\Entities\Leads;
-use ForwardForce\Daxko\Entities\TimeOff;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
-use GuzzleHttp\Exception\TransferException;
 use GuzzleHttp\Psr7\Message;
 
 
@@ -46,8 +42,15 @@ class Daxko
      * a refresh token for subsequent re-authentication.
      *
      * [The access token can be stored in session or simmilar storage - use when creating new Daxko instance]
+     *
+     * @param string $clientId 	    The provided username when generating your Daxko API credentials
+     * @param string $clientSecret 	The provided password  when generating your Daxko API credentials
+     * @param string $scope 	    The customer/client you are trying to programmatically interact with
+     * // @param string $grantType 	This will always be set to client_credentials when getting a new token.
+     *
+     * @return array
      */
-    public static function getToken(string $clientId, string $clientSecret, string $scope, string $grantType)
+    public static function getToken(string $clientId, string $clientSecret, string $scope, string $grantType = ''): array
     {
         try {
             $response = (new Client())
@@ -57,7 +60,7 @@ class Daxko
                         'client_id' => $clientId,
                         'client_secret' => $clientSecret,
                         'scope' => $scope,
-                        'grant_type' => $grantType,
+                        'grant_type' => 'client_credentials',
                     ]
                 ]);
 
@@ -71,14 +74,23 @@ class Daxko
             return $error;
 
         } catch (GuzzleException $e) {
-            return $e->getMessage();
+            return [
+                'error' => $e->getMessage()
+            ];
         }
 
-        return json_decode($response->getBody()->getContents(), true);
+        return json_decode($response->getBody()->getContents(), true) ?? [];
     }
 
-
-    public static function refreshToken(string $clientId, string $refreshToken)
+    /**
+     * Refresh expired API access token
+     *
+     * @param string $clientId 	    The provided username when generating your Daxko API credentials
+     * @param string $refreshToken 	A refresh token as returned by `getToken()` under `refresh_token` key
+     *
+     * @return array
+     */
+    public static function refreshToken(string $clientId, string $refreshToken): array
     {
         try {
             $response = (new Client())
@@ -101,15 +113,17 @@ class Daxko
             return $error;
 
         } catch (GuzzleException $e) {
-            return $e->getMessage();
+            return [
+                'error' => $e->getMessage()
+            ];
         }
 
-        return json_decode($response->getBody()->getContents(), true);
+        return json_decode($response->getBody()->getContents(), true) ?? [];
     }
 
 
     /**
-     * Get registrations from API
+     * Get a Daxko Class entity
      *
      * @return DaxkoClass
      */
@@ -121,7 +135,7 @@ class Daxko
     }
 
     /**
-     * Get registrations from API
+     * Get a Daxko User entity
      *
      * @return DaxkoUser
      */

@@ -40,7 +40,8 @@ class DaxkoClass extends DaxkoEntity implements ApiAwareContract
     protected function setProperties(array $propertiesName =[])
     {
         $properties = $this->responseToArray();
-        $this->properties = array_merge($this->properties, $properties['brief']);
+        $propertiesBrief = isset($properties['brief']) ? $properties['brief'] : [];
+        $this->properties = array_merge($this->properties, $propertiesBrief);
 
         parent::setProperties($propertiesName);
     }
@@ -179,6 +180,7 @@ class DaxkoClass extends DaxkoEntity implements ApiAwareContract
      */
     public function all(array $params =[]): array
     {
+        $classes = [];
         $uri = 'api/v1/classes/';
         $requestParams = [ 'startDate', 'endDate', 'locationId' ];
         $missingParams = array_diff($requestParams, array_keys($params));
@@ -193,23 +195,21 @@ class DaxkoClass extends DaxkoEntity implements ApiAwareContract
             $this->response = $this->client
                 ->request('GET', $uri, [ 'query' => $params ]);
 
-            $classes = [];
             $apiClasses = $this->responseToArray();
 
             foreach ($apiClasses as $class) {
-                // $instance = new static($this->client);
-                // $instance->response->withBody(new Message());
-                // $instance->setProperties();
-                // $classes[] = $instance;
-
-                $classes[] = $class['brief'];
+                if (isset($class['brief'])) {
+                    $classes[] = $class['brief'];
+                }
             }
-                    // $classes = $apiClasses;
+
         } catch (RequestException $e) {
-            $error['request'] = Message::toString($e->getRequest());
+            // $error['request'] = Message::toString($e->getRequest());
+            $error['message'] = $e->getMessage();
 
             if ($e->hasResponse()) {
-                $error['response'] = Message::toString($e->getResponse());
+                $error['response'] = json_decode(
+                    $e->getResponse()->getBody()->getContents(), true);
             }
 
             $this->errors = $error;
@@ -240,13 +240,15 @@ class DaxkoClass extends DaxkoEntity implements ApiAwareContract
             $this->setProperties();
 
         } catch (RequestException $e) {
-            $error['request'] = Message::toString($e->getRequest());
+             // $error['request'] = Message::toString($e->getRequest());
+             $error['message'] = $e->getMessage();
 
-            if ($e->hasResponse()) {
-                $error['response'] = Message::toString($e->getResponse());
-            }
+             if ($e->hasResponse()) {
+                 $error['response'] = json_decode(
+                     $e->getResponse()->getBody()->getContents(), true);
+             }
 
-            $this->errors = $error;
+             $this->errors = $error;
 
         } catch (GuzzleException $e) {
             $this->errors['message'] = $e->getMessage();

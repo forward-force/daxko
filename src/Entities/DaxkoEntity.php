@@ -73,8 +73,21 @@ abstract class DaxkoEntity
         }
 
         if (!self::$responseArray) {
-            self::$responseArray = json_decode(
-                $this->response->getBody()->getContents(), true);
+            try {
+                $json = json_decode(
+                    $this->response->getBody()->getContents(),
+                    true,
+                    JSON_THROW_ON_ERROR
+                );
+
+            } catch (\JsonException $e) {
+                $this->errors['json_decode'] = [
+                    'code' => $e->getCode(),
+                    'message' => $e->getMessage(),
+                ];
+            }
+
+            self::$responseArray = $json ?? [];
         }
 
         return self::$responseArray;
