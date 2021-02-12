@@ -10,8 +10,7 @@ abstract class DaxkoEntity
     protected Client $client;
     protected ?ResponseInterface $response;
     protected ?array $errors;
-
-    private static $responseArray = [];
+    protected array $responseArray = [];
 
 
     public function __construct(Client $client)
@@ -72,12 +71,25 @@ abstract class DaxkoEntity
             );
         }
 
-        if (!self::$responseArray) {
-            self::$responseArray = json_decode(
-                $this->response->getBody()->getContents(), true);
+        if (!$this->responseArray) {
+            try {
+                $json = json_decode(
+                    $this->response->getBody()->getContents(),
+                    true,
+                    JSON_THROW_ON_ERROR
+                );
+
+            } catch (\JsonException $e) {
+                $this->errors['json_decode'] = [
+                    'code' => $e->getCode(),
+                    'message' => $e->getMessage(),
+                ];
+            }
+
+            $this->responseArray = $json ?? [];
         }
 
-        return self::$responseArray;
+        return $this->responseArray;
     }
 
     /**
