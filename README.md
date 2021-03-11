@@ -95,7 +95,7 @@ To run locally, you can use the docker container provided here. You can run it l
 docker-compose up
 ```
 
-Then you can ssh into the `php-fpm` container. Please note, you need to set your WORKIZ API key and SECRET as 
+Then you can ssh into the `php-fpm` container. Please note, you need to set your DAXKO API key and SECRET as 
 environmental variables `$DAXKO_TOKEN` and `$DAXKO_SECRET` respectively. However, the secret is not needed at this time
 you could set it to anything.
 
